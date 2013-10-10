@@ -571,17 +571,45 @@ namespace umbraco.providers
             // user will throw an exception
             try
             {
-                User user = new User(username);
-                if (user != null && user.Id != -1)
+                var user = new User(username);
+                
+                if (user.Id != -1)
                 {
-                    if (user.Disabled) return false;
-                    else return user.ValidatePassword(EncodePassword(password));
+                    if (user.Disabled)
+                    {
+                        return false;
+                    }
+                    // If under the max number of attempts or over the max but also outside the window
+                    // allow the login attempt
+                    if (user.FailedPasswordAttempts < MaxInvalidPasswordAttempts 
+                        || (user.FailedPasswordAttempts >= MaxInvalidPasswordAttempts 
+                        && user.FailedPasswordAttemptsWindowStart < DateTime.Now.AddMinutes(-PasswordAttemptWindow)))
+                    {
+                        var success = user.ValidatePassword(EncodePassword(password));
+                        if (success)
+                        {
+                            // Reset the login attempts
+                            user.FailedPasswordAttempts = 0;
+                        }
+                        else
+                        {
+                            // Increment login attempts
+                            user.FailedPasswordAttempts++;
+                            if (user.FailedPasswordAttemptsWindowStart < DateTime.Now.AddMinutes(-PasswordAttemptWindow))
+                            {
+                                user.FailedPasswordAttemptsWindowStart = DateTime.Now;
+                            }
+                        }
+                        return success;
+                    }
+                    return false;
                 }
             }
             catch
             {
                 // nothing to catch here - move on
             }
+
 
             return false;
         } 

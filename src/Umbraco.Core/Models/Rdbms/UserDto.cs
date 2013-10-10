@@ -1,4 +1,5 @@
-﻿using Umbraco.Core.Persistence;
+﻿using System;
+using Umbraco.Core.Persistence;
 using Umbraco.Core.Persistence.DatabaseAnnotations;
 
 namespace Umbraco.Core.Models.Rdbms
@@ -59,5 +60,15 @@ namespace Umbraco.Core.Models.Rdbms
         [Column("defaultToLiveEditing")]
         [Constraint(Default = "0")]
         public bool DefaultToLiveEditing { get; set; }
+
+        [Column("failedPasswordAttempts")]
+        [Constraint(Default = "0")]
+        public int FailedPasswordAttempts { get; set; }
+
+        [Column("failedPasswordAttemptsWindowStart")]
+        [NullSetting(NullSetting = NullSettings.Null)]
+        public DateTime? FailedPasswordAttemptsWindowStart { get; set; }
+
+
     }
 }

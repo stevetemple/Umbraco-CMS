@@ -26,6 +26,8 @@ namespace umbraco.BusinessLogic
         private bool _userNoConsole;
         private bool _userDisabled;
         private bool _defaultToLiveEditing;
+        private int _failedPasswordAttempts;
+        private DateTime? _failedPasswordAttemptsWindowStart;
 
         private Hashtable _cruds = new Hashtable();
         private bool _crudsInitialized = false;
@@ -97,6 +99,9 @@ namespace umbraco.BusinessLogic
                         _startmediaid = dr.GetInt("startMediaID");
                     _usertype = UserType.GetUserType(dr.GetShort("UserType"));
                     _defaultToLiveEditing = dr.GetBoolean("defaultToLiveEditing");
+                    _failedPasswordAttempts = dr.GetInt("failedPasswordAttempts");
+                    if (!dr.IsNull("failedPasswordAttempts"))
+                        _failedPasswordAttemptsWindowStart = dr.GetDateTime("failedPasswordAttempts");
                 }
                 else
                 {
@@ -202,6 +207,48 @@ namespace umbraco.BusinessLogic
                 SqlHelper.CreateParameter("@id", this.Id));
         }
 
+        /// <summary>
+        /// Gets or sets the number of failed password attempts for the user.
+        /// </summary>
+        /// <value>The number of attempts.</value>
+        public DateTime? FailedPasswordAttemptsWindowStart
+        {
+            get
+            {
+                if (!_isInitialized)
+                    setupUser(_id);
+                return _failedPasswordAttemptsWindowStart;
+            }
+            set
+            {
+                _failedPasswordAttemptsWindowStart = value;
+                SqlHelper.ExecuteNonQuery("Update umbracoUser set failedPasswordAttemptsWindowStart = @attempts where id = @id", SqlHelper.CreateParameter("@attempts", value), SqlHelper.CreateParameter("@id", Id));
+                FlushFromCache();
+            }
+        }
+
+
+        /// <summary>
+        /// Gets or sets the number of failed password attempts for the user.
+        /// </summary>
+        /// <value>The number of attempts.</value>
+        public int FailedPasswordAttempts
+        {
+            get
+            {
+                if (!_isInitialized)
+                    setupUser(_id);
+                return _failedPasswordAttempts;
+            }
+            set
+            {
+                _failedPasswordAttempts = value;
+                SqlHelper.ExecuteNonQuery("Update umbracoUser set failedPasswordAttemps = @attempts where id = @id", SqlHelper.CreateParameter("@attempts", value), SqlHelper.CreateParameter("@id", Id));
+                FlushFromCache();
+            }
+        }
+
+        
         /// <summary>
         /// Determines whether this user is an admin.
         /// </summary>
