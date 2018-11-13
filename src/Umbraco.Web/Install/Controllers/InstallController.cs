@@ -58,7 +58,7 @@ namespace Umbraco.Web.Install.Controllers
                         ApplicationContext.Current.Services.MigrationEntryService.CreateEntry("Umbraco", UmbracoVersion.GetSemanticVersion());
                     }
 
-                    ApplicationContext.EnsureContext(new ApplicationContext(ApplicationContext.Current.ApplicationCache, ApplicationContext.Current.ProfilingLogger), true);
+                    ApplicationContext.EnsureContext(new ApplicationContext(ApplicationContext.Current.DatabaseContext, ApplicationContext.Current.Services, ApplicationContext.Current.ApplicationCache, ApplicationContext.Current.ProfilingLogger), true);
                     return Redirect("/");
                 }
 
