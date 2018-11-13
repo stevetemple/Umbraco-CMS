@@ -133,6 +133,7 @@ namespace Umbraco.Web.Install
                     errorMsg,
                     userAgent,
                     dbProvider);
+
             }
             catch (Exception ex)
             {

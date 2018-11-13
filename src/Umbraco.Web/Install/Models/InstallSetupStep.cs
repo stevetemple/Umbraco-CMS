@@ -91,5 +91,8 @@ namespace Umbraco.Web.Install.Models
             get { return View.IsNullOrWhiteSpace() == false; }
         }
 
+        [IgnoreDataMember]
+        public abstract bool HasWorkToDo { get; }
+        
     }
 }

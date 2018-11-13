@@ -7,6 +7,8 @@ using System.Web.Mvc;
 using Umbraco.Core;
 using Umbraco.Core.Configuration;
 using Umbraco.Core.IO;
+using Umbraco.Core.Persistence.Migrations;
+using Umbraco.Core.Services;
 using Umbraco.Web.Security;
 
 namespace Umbraco.Web.Install.Controllers
@@ -42,8 +44,25 @@ namespace Umbraco.Web.Install.Controllers
                 return Redirect(SystemDirectories.Umbraco.EnsureEndsWith('/'));   
             }
 
+            InstallHelper ih = new InstallHelper(_umbracoContext);
+
             if (ApplicationContext.Current.IsUpgrading)
             {
+                var steps = ih.GetStepsForCurrentInstallType();
+                var stespWithWorkToDo = steps.Where(s => s.HasWorkToDo);
+                if (stespWithWorkToDo.Any() == false)
+                {
+                    var exists = ApplicationContext.Current.Services.MigrationEntryService.FindEntry("Umbraco", UmbracoVersion.GetSemanticVersion());
+                    if (exists == null)
+                    {
+                        ApplicationContext.Current.Services.MigrationEntryService.CreateEntry("Umbraco", UmbracoVersion.GetSemanticVersion());
+                    }
+
+                    ApplicationContext.EnsureContext(ApplicationContext.Current, true);
+                    return Redirect("/");
+                }
+
+
                 // Update ClientDependency version
                 var clientDependencyConfig = new ClientDependencyConfiguration(_umbracoContext.Application.ProfilingLogger.Logger);
                 var clientDependencyUpdated = clientDependencyConfig.UpdateVersionNumber(
@@ -68,7 +87,6 @@ namespace Umbraco.Web.Install.Controllers
             //get the base umbraco folder
             ViewBag.UmbracoBaseFolder = IOHelper.ResolveUrl(SystemDirectories.Umbraco);
 
-            InstallHelper ih = new InstallHelper(_umbracoContext);
             ih.InstallStatus(false, "");
 
             //always ensure full path (see NOTE in the class remarks)

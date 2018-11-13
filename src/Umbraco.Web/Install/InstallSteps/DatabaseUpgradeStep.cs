@@ -79,5 +79,10 @@ namespace Umbraco.Web.Install.InstallSteps
             //no connection string configured, probably a fresh install
             return false;
         }
+
+        public override bool HasWorkToDo
+        {
+            get { return false; } // TODO Actually check that there are migrations to run
+        }
     }
 }

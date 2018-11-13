@@ -62,6 +62,14 @@ namespace Umbraco.Web.Install.InstallSteps
             return UmbracoVersion.Current == Version.Parse("7.3.0");
         }
 
+        public override bool HasWorkToDo
+        {
+            get
+            {
+                return UmbracoVersion.Current <= Version.Parse("7.3.0");
+            }
+        }
+
         private void ProcessWebConfigs(DirectoryInfo dir)
         {
             //Do the processing of files

@@ -71,5 +71,13 @@ namespace Umbraco.Web.Install.InstallSteps
         {
             return HasMachineKey() == false;
         }
+
+        public override bool HasWorkToDo
+        {
+            get
+            {
+                return HasMachineKey() == false;
+            }
+        }
     }
 }

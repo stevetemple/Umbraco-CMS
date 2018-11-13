@@ -64,5 +64,13 @@ namespace Umbraco.Web.Install.InstallSteps
         {
             return true;
         }
+
+        public override bool HasWorkToDo
+        {
+            get
+            {
+                return ConfigurationManager.ConnectionStrings[Constants.System.UmbracoConnectionName] == null;
+            }
+        }
     }
 }

@@ -2,10 +2,12 @@
 using System;
 using System.Collections.Concurrent;
 using System.Configuration;
+using System.Linq;
 using System.Threading;
 using Umbraco.Core.Configuration;
 using Umbraco.Core.Logging;
 using Umbraco.Core.ObjectResolution;
+using Umbraco.Core.Persistence.Migrations;
 using Umbraco.Core.Profiling;
 using Umbraco.Core.Scoping;
 using Umbraco.Core.Services;

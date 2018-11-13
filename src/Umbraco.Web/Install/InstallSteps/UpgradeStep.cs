@@ -49,5 +49,14 @@ namespace Umbraco.Web.Install.InstallSteps
             }
         }
 
+        public override bool HasWorkToDo
+        {
+            get
+            {
+                return false;
+            }
+            
+        }
+        
     }
 }

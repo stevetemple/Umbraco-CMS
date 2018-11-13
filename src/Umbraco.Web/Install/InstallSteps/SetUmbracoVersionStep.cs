@@ -25,6 +25,9 @@ namespace Umbraco.Web.Install.InstallSteps
             _httpContext = httpContext;
         }
 
+        public override bool HasWorkToDo => GlobalSettings.ConfigurationStatus !=
+                                            UmbracoVersion.GetSemanticVersion().ToSemanticString();
+
         public override InstallSetupResult Execute(object model)
         {
             var ih = new InstallHelper(UmbracoContext.Current);
